@@ -1,19 +1,18 @@
-import { Box, Typography } from '@mui/material'
 import React from 'react'
+import { Box, Typography } from '@mui/material'
 
 const Footer = () => {
-    return (
-        <>
-            <Box sx={{flexGrow: 1}} color="black">
-                <Typography variant='h4' align="center" gutterBottom>
-                    Hope you guy's have enjoied my photo album.
-                </Typography>
-                <Typography variant='h6' align="center" gutterBottom>
-                    Please visit again here to see more photos in my album. Thank you. Bye Bye....
-                </Typography>
-            </Box>
-        </>
-    )
+  return (
+    <>
+    <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}>
+    <Typography paragraph>
+        Thank you for visiting my photo gallery!<br/>
+ Hope You have enjoyed this album.<br/>
+ Connect with me if you wish to make something like this for yourself too.
+        </Typography>
+    </Box>
+    </>
+  )
 }
 
 export default Footer

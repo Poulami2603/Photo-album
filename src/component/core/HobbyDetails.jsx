@@ -1,16 +1,17 @@
-import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
 import Card from '@mui/material/Card';
 import { Box } from '@mui/material';
 import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
 import Navbar from '../common/Navbar';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 
-const PartyDetails = () => {
+
+const HobbyDetails = () => {
 
   const [darkMode, setDarkMode] = useState(false)
   const darkTheme = createTheme({
@@ -25,17 +26,21 @@ const PartyDetails = () => {
 
   const ApiSinglePage = async () => {
     const response = await axios.get(`http://127.0.0.1:3005/all/${id}`)
+    console.log(response)
     setSingledata(response?.data)
   }
 
   useEffect(() => {
     ApiSinglePage(id)
   }, [])
+  console.log(singledata)
+
 
 
   return (
+
     <>
-      <ThemeProvider theme={darkTheme}>
+    <ThemeProvider theme={darkTheme}>
       {
         singledata &&
         <div className="container">
@@ -74,4 +79,4 @@ const PartyDetails = () => {
   )
 }
 
-export default PartyDetails
+export default HobbyDetails

@@ -1,85 +1,149 @@
-import React, { useEffect, useState } from 'react'
-import Card from '@mui/material/Card';
-import CardMedia from '@mui/material/CardMedia';
-import CardContent from '@mui/material/CardContent';
-import CardActions from '@mui/material/CardActions';
-import IconButton from '@mui/material/IconButton';
+import React, { useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
+import { useNavigate } from 'react-router-dom';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import Slider from "react-slick";
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
+import ImageListItemBar from '@mui/material/ImageListItemBar';
+import IconButton from '@mui/material/IconButton';
+import InfoIcon from '@mui/icons-material/Info';
+import Footer from '../common/Footer';
+import Navbar from '../common/Navbar';
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
+import { Box } from '@mui/material';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+
 
 
 const Party = () => {
 
-    const [data, setData] = useState([])
+  const [darkMode, setDarkMode] = useState(false)
+  const darkTheme = createTheme({
+    palette: {
+      mode: darkMode?'dark':'light'
+    },
+  });
 
-    const ApiFetchData = async () => {
-        const response = await axios.get(`http://127.0.0.1:3005/party`)
-        setData(response?.data)
-    }
+  const [data, setData] = useState([])
 
-    useEffect(() => {
-        ApiFetchData()
-    }, [])
+  const ApiFetchData = async () => {
+    const response = await axios.get(`http://127.0.0.1:3005/all`)
+    const catagory = response?.data.filter((e)=>{
+      return e.catagory === 'Party'
+    })
+    setData(catagory)
+  }
+
+  useEffect(() => {
+    ApiFetchData()
+  }, [])
 
 
-    const settings = {
-        dots: false,
-        infinite: true,
-        speed: 2000,
-        slidesToShow: 5,
-        slidesToScroll: 3,
-        arrows: true,
-        // autoplay: true,
-        // autoplaySpeed: 1500
-    };
+  const name = localStorage.getItem('name')
+  const token = localStorage.getItem('token')
 
-    return (
-        <>
-            <Typography variant='h4' className='text-center my-5'>
-                It's Party time...
+  const handleClick = async(data)=>{
+  const response = await axios.get('http://127.0.0.1:3008/favourite') 
+  const matchdata = response?.data.filter((e) => {
+    return e.id === token
+  }) 
+  console.log(response?.data);
+  const initial = {
+    name: name,
+    id: token,
+    data: [data]
+  }
+  const fav = async () => {
+    const res = await axios.post('http://127.0.0.1:3008/favourite', initial)
+    console.log(res);
+  }
+  if (matchdata.length !== 0) {
+    const res = await axios.patch(`http://127.0.0.1:3008/favourite/${token}`, {
+      data: response?.data[0].data.concat(data)
+    })
+    console.log(res);
+  } else {
+    fav()
+  }
+}
+
+  const [currentPage, setCurrentPage] = useState(1)
+  const [postPerPage, setPostPerPage] = useState(6)
+  const lastPostIndex = currentPage * postPerPage
+  const firstPostIndex = lastPostIndex - postPerPage
+  const currentPosts = data.slice(firstPostIndex, lastPostIndex)
+
+
+  const navigate = useNavigate()
+  const handleClick1 = (e) => {
+    navigate(`/${e.id}`)
+  }
+
+
+  return (
+    <>
+    <ThemeProvider theme={darkTheme}>
+      <div className="container">
+        <div className="row">
+          <div className="col-md-2">
+            <Navbar check={darkMode} change={()=>setDarkMode(!darkMode)}/>
+          </div>
+          <div className="col-md-10" style={{ marginTop: '100px' }}>
+            <Typography paragraph>
+              "A picture is worth a thousand words" Our life's journey reflects this proverb in many ways when we want to convey our special moments to people quickly. This gallery is one such way in which I intend to tell my story to you or even keep it for myself to flip over at times when I wish to hop through memory lanes.
             </Typography>
-            <div className="container">
-                <Slider {...settings}>
-                    {
-                        data?.map((item) => {
-                            return (
-                                <>
-                                    <div className="col-md-4">
-                                        <Link to={`/party/${item.id}`}>
-                                            <Card sx={{ minWidth: 200 }}>
-                                                <CardMedia
-                                                    component="img"
-                                                    height={300}
-                                                    width={100}
-                                                    image={item.image}
-                                                    alt="Cake1"
-                                                />
-                                                <CardContent>
-                                                    <Typography variant="h6" align='center' color="text.secondary">
-                                                        {item.title.slice(0, 10)}...
-                                                    </Typography>
-                                                </CardContent>
-                                                <CardActions disableSpacing>
-                                                    <IconButton aria-label="add to favorites">
-                                                        <FavoriteIcon />
-                                                    </IconButton>
-                                                </CardActions>
-                                            </Card>
-                                        </Link>
-                                    </div>
-                                </>
-                            )
-                        })
-                    }
-                </Slider>
+            <div className="row">
+              {
+                currentPosts?.map((e) => {
+                  return (
+                    <>
+                      <div className="col-md-4 my-3">
+                      <ImageList sx={{ width: 500, height: 450 }}>
+                          <ImageListItem cols={4}>
+                          </ImageListItem>
+                          <ImageListItem key={e.image}>
+                            <img
+                              src={e.image}
+                              srcSet={e.image}
+                              alt={e.title}
+                              loading="lazy"
+                            />
+                            <ImageListItemBar
+                              title={e.title}
+                              actionIcon={
+                                <IconButton
+                                  sx={{ color: 'rgba(255, 255, 255, 0.54)' }}
+                                  aria-label={e.title}
+                                >
+                                  <InfoIcon style={{ color: 'orange' }} onClick={() => { handleClick1(e) }} />
+                                  <IconButton aria-label="add to favorites" onClick={() => { handleClick(e) }}>
+                                    <FavoriteIcon style={{ color: 'red' }} />
+                                  </IconButton>
+                                </IconButton>
+                              }
+                            />
+                          </ImageListItem>
+                        </ImageList>
+                      </div>
+                    </>
+                  )
+                })
+              }
             </div>
-        </>
-    )
+            <Box justifyContent={'center'} alignItems={'center'} display={'flex'} sx={{margin: "20px 0px"}}>
+            <Stack spacing={10} >
+              <Pagination count={2} color="secondary" variant='outlined' onChange={(event, value) => setCurrentPage(value)}/>
+            </Stack>
+            </Box>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    </ThemeProvider>
+    </>
+  )
 }
 
 export default Party

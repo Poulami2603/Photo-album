@@ -23,7 +23,13 @@ export const AuthSlice = createSlice({
     regdata: [],
     authRedirect: null
     },
-    reducers: { },
+    reducers: {
+        Logout: (state, {payload}) =>{
+            localStorage.removeItem('name')
+            localStorage.removeItem('token')
+            alert('Logout Sucessfully')
+        }
+     },
     extraReducers: {
         [RegisterApi.pending] : (state) =>{
             state.loader = true
@@ -51,5 +57,5 @@ export const AuthSlice = createSlice({
     }
 })
 
-export const { } = AuthSlice.actions
+export const { Logout } = AuthSlice.actions
 

@@ -49,6 +49,8 @@ const Login = () => {
       }
       else {
         alert('login success')
+        localStorage.setItem('name',matchEmail[0].name)
+        localStorage.setItem('token',matchEmail[0].id)
         navigate('/')
       }
     }
@@ -102,8 +104,8 @@ const Login = () => {
                   alignItems: "center",
                 }}
               >
-                <Typography component="h1" variant="h5">
-                  Sign in
+                <Typography variant="h5">
+                  Welcome to My Photo Album
                 </Typography>
                 <Box
                   component="form"
@@ -156,7 +158,7 @@ const Login = () => {
                   </Grid> */}
                   <Grid container justifyContent="flex-start">
                     <Grid item>
-                      <Typography>Don't have an account? <Link to="/register" variant="body2"> Sign in</Link></Typography>
+                      <Typography>Don't have an account? <Link to="/register" variant="body2"> Sign Up</Link></Typography>
                     </Grid>
                   </Grid>
                 </Box>

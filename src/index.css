@@ -272,3 +272,14 @@ h5{
   margin-top: 7px;
 }
 
+.li1{
+  list-style: none ;
+  text-decoration: none !important;
+  /* color: #0000 !important; */
+}
+.nm-1{
+  text-decoration: none !important;
+}
+html,body{
+  overflow-x: hidden;
+}

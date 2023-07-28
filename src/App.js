@@ -1,53 +1,123 @@
 import React, { useState } from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import Main from "./Pages/Main";
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import './index.css'
-import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import Footer from './component/common/Footer';
-import Navbar from './component/common/Navbar';
 import ProfileDetails from './component/core/ProfileDetails';
-import Hobby1Details from './component/core/Hobby1Details';
-import Hobby2Details from './component/core/Hobby2Details';
+import HobbyDetails from './component/core/HobbyDetails';
 import PartyDetails from './component/core/PartyDetails';
 import FriendDetails from './component/core/FriendDetails';
 import CollageDetails from './component/core/CollageDetails';
 import Login from './Pages/Login';
 import Register from './Pages/Register';
+import Hobby from './component/core/Hobby';
+import Collage from './component/core/Collage';
+import Friends from './component/core/Friends';
+import Party from './component/core/Party';
+import Footer from './component/common/Footer';
+import Profile from './component/core/Profile';
+import AddFavourite from './Pages/AddFavourite';
+import Upload from './Pages/Upload';
+
 
 
 function App() {
 
-  const [darkMode, setDarkMode] = useState(false)
-  const darkTheme = createTheme({
-    palette: {
-      mode: darkMode ? 'dark' : 'light'
+  
+  const Authentication = ({ children }) => {
+    const token = localStorage.getItem('token')
+    return token !== null && token !== undefined ? (
+      children
+    ) : (
+      <Navigate to="/login" />
+    )
+  }
+
+  const publicRoutes = [
+    {
+      path: '/login',
+      component: <Login />
     },
-  });
+    {
+      path: '/register',
+      component: <Register />
+    }
+  ]
+
+  const protectedRoute = [
+    {
+      component: <Footer />
+    },
+    {
+      path: '/',
+      component: <Profile />
+    },
+    {
+      path: '/:id',
+      component: <ProfileDetails />
+    },
+    {
+      path: '/hobby',
+      component: <Hobby/>
+    },
+    {
+      path: '/hobby/:id',
+      component: <HobbyDetails />
+    },
+    {
+      path: '/friends',
+      component: <Friends/>
+    },
+    {
+      path: '/friends/:id',
+      component: <FriendDetails />
+    },
+    {
+      path: '/collage',
+      component: <Collage/>
+    },
+    {
+      path: '/collage/:id',
+      component: <CollageDetails />
+    },
+    {
+      path: '/party',
+      component: <Party/>
+    },
+    {
+      path: '/party/:id',
+      component: <PartyDetails />
+    },
+    {
+      path: '/upload',
+      component: <Upload />
+    },
+    {
+      path: '/addfavourite',
+      component: <AddFavourite />
+    }
+  ]
 
   return (
     <>
       <Router>
-        <Navbar />
         <CssBaseline />
-        <ThemeProvider theme={darkTheme}>
-          <Routes>
-            <Route path='/login' element={<Login/>}/>
-            <Route path='/register' element={<Register/>}/>
-            <Route path='/' element={<Main />} />
-            <Route path='/:id' element={ <ProfileDetails/>} />
-            <Route path='/hobby1/:id' element={<Hobby1Details/>}/>
-            <Route path='/hobby2/:id' element={<Hobby2Details/>}/>
-            <Route path='/friends/:id' element={<FriendDetails/>}/>
-            <Route path='/collage/:id' element={<CollageDetails/>}/> 
-            <Route path='/party/:id' element={<PartyDetails/>}/>
-          </Routes>
-          <Footer />
-        </ThemeProvider>
+        <Routes>
+          {
+            publicRoutes.map((e) => {
+              return (
+                <Route path={e.path} element={e.component} />
+              )
+            })
+          }
+          {
+            protectedRoute.map((e) => {
+              return (
+                <Route exact path={e.path} element={<Authentication>{e.component}</Authentication>}/>
+              )
+            })
+          }
+        </Routes>
       </Router>
-      <div className="mt-5">
-      </div>
-
     </>
   );
 }

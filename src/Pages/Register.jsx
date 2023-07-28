@@ -82,8 +82,8 @@ useEffect(() =>{
             <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
               <LockOutlinedIcon />
             </Avatar>
-            <Typography component="h1" variant="h5">
-              Sign up
+            <Typography variant="h5">
+            Welcome to My Photo Album
             </Typography>
             <Box
               component="form"
